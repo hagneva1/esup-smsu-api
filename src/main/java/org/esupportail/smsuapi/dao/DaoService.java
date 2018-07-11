@@ -21,25 +21,29 @@ import org.esupportail.smsuapi.dao.beans.Statistic;
 import org.esupportail.smsuapi.domain.beans.sms.SmsStatus;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 
 /**
  * The Hibernate implementation of the DAO service.
  */
-public class DaoService extends HibernateDaoSupport
-			 implements InitializingBean {
+public class DaoService {
 	
 	/**
 	 * A logger.
 	 */
 	private final Logger logger = Logger.getLogger(getClass());
 	
+    private SessionFactory sessionFactory;
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
 	/**
 	 * Bean constructor.
 	 */
@@ -52,7 +56,7 @@ public class DaoService extends HibernateDaoSupport
 	 * @return
 	 */
 	private Session getCurrentSession() {
-		return getHibernateTemplate().getSessionFactory().getCurrentSession();
+		return sessionFactory.getCurrentSession();
 	}
 
 
