@@ -23,7 +23,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.InitializingBean;
@@ -67,9 +66,9 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public Account getAccByLabel(final String labelAccount) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Account.class);
+		Criteria criteria = getCurrentSession().createCriteria(Account.class);
 		criteria.add(Restrictions.eq(Account.PROP_LABEL, labelAccount));
-		List<Account> acc = getHibernateTemplate().findByCriteria(criteria); 
+		List<Account> acc = criteria.list(); 
 		if (acc.size() != 0) { return acc.get(0);
 		} else { return null; }
 		
@@ -82,9 +81,9 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public int getBlackLListByPhone(final String phone) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Blacklist.class);
+		Criteria criteria = getCurrentSession().createCriteria(Blacklist.class);
 		criteria.add(Restrictions.eq(Blacklist.PROP_BLA_PHONE, phone));
-		List<Blacklist> bla = getHibernateTemplate().findByCriteria(criteria);  
+		List<Blacklist> bla = criteria.list();  
 		return  bla.size();  
 		
 	}
@@ -98,10 +97,10 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public int getNbDest(final Integer msgId, final Application app) {
-			DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+			Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 			criteria.add(Restrictions.eq(Sms.PROP_INITIAL_ID, msgId));
 			criteria.add(Restrictions.eq(Sms.PROP_APP, app));
-			List<Sms> sms = getHibernateTemplate().findByCriteria(criteria);  
+			List<Sms> sms = criteria.list();  
 			return  sms.size();   
 	}
 	
@@ -110,11 +109,11 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public int getNbSmsWithState(final Integer msgId, final Application app, final List<String> list) {
-			DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+			Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 			criteria.add(Restrictions.eq(Sms.PROP_INITIAL_ID, msgId));
 			criteria.add(Restrictions.eq(Sms.PROP_APP, app));
 			criteria.add(Restrictions.in(Sms.PROP_STATE, list));
-			List<Sms> sms = getHibernateTemplate().findByCriteria(criteria);  
+			List<Sms> sms = criteria.list();  
 			return  sms.size();   
 			
 	}
@@ -124,11 +123,11 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public int getNbSentSMS(final Integer msgId, final Application app) {
-			DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+			Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 			criteria.add(Restrictions.eq(Sms.PROP_INITIAL_ID, msgId));
 			criteria.add(Restrictions.eq(Sms.PROP_APP, app));
 			criteria.add(Restrictions.eq(Sms.PROP_STATE, SmsStatus.DELIVERED.name()));
-			List<Sms> sms = getHibernateTemplate().findByCriteria(criteria);  
+			List<Sms> sms = criteria.list();  
 				if (sms.isEmpty()) { return 0; 
 				} else { return  sms.size(); }  
 			
@@ -140,11 +139,11 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public int getNbProgressSMS(final Integer msgId, final Application app) {
-			DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+			Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 			criteria.add(Restrictions.eq(Sms.PROP_INITIAL_ID, msgId));
 			criteria.add(Restrictions.eq(Sms.PROP_APP, app));
 			criteria.add(Restrictions.eq(Sms.PROP_STATE, SmsStatus.IN_PROGRESS.name()));
-			List<Sms> sms = getHibernateTemplate().findByCriteria(criteria);  
+			List<Sms> sms = criteria.list();  
 				if (sms.isEmpty()) { return 0; 
 				} else { return  sms.size(); }  
 			
@@ -156,11 +155,11 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public int getNbErrorSMS(final Integer msgId, final Application app, final List<String> list) {
-			DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+			Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 			criteria.add(Restrictions.eq(Sms.PROP_INITIAL_ID, msgId));
 			criteria.add(Restrictions.eq(Sms.PROP_APP, app));
 			criteria.add(Restrictions.in(Sms.PROP_STATE, list));
-			List<Sms> sms = getHibernateTemplate().findByCriteria(criteria);  
+			List<Sms> sms = criteria.list();  
 			return  sms.size();   
 			
 	}
@@ -170,11 +169,11 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Sms> getListNumErreur(final Integer msgId, final Application app, final List<String> list) {
-			DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+			Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 			criteria.add(Restrictions.eq(Sms.PROP_INITIAL_ID, msgId));
 			criteria.add(Restrictions.eq(Sms.PROP_APP, app));
 			criteria.add(Restrictions.in(Sms.PROP_STATE, list));
-			return getHibernateTemplate().findByCriteria(criteria);  
+			return criteria.list();  
 	}
 
 	//////////////////////////////////////////////////////////////
@@ -186,7 +185,7 @@ public class DaoService extends HibernateDaoSupport
 	 * @return
 	 */
 	public Sms getSms(final int id) {
-		return (Sms) getHibernateTemplate().get(Sms.class, id);
+		return (Sms) getCurrentSession().get(Sms.class, id);
 	}
 	
 	public Sms getSmsByBrokerId(String id) {
@@ -203,18 +202,18 @@ public class DaoService extends HibernateDaoSupport
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Sms> getSms(final Application app, final  int id, final String phoneNumber) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+		Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 		criteria.add(Restrictions.eq(Sms.PROP_INITIAL_ID,id));
 		criteria.add(Restrictions.eq(Sms.PROP_APP,app));
 		criteria.add(Restrictions.eq(Sms.PROP_PHONE, phoneNumber));
-		return getHibernateTemplate().findByCriteria(criteria);
+		return criteria.list();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Sms> getSms(SmsStatus status) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+		Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 		criteria.add(Restrictions.eq(Sms.PROP_STATE, status.name()));
-		return getHibernateTemplate().findByCriteria(criteria);		
+		return criteria.list();		
 	}
 
 	/**
@@ -428,7 +427,7 @@ public class DaoService extends HibernateDaoSupport
 	
 	@SuppressWarnings("unchecked")
 	public List<Map<String,?>> getAppsAndCountsToTreat() {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Sms.class);
+		Criteria criteria = getCurrentSession().createCriteria(Sms.class);
 		
 		criteria.setProjection(Projections.projectionList()
 				.add( Projections.distinct(Projections.projectionList()
@@ -437,7 +436,7 @@ public class DaoService extends HibernateDaoSupport
 		
 		criteria.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 		
-		List<Map<String,?>> result = getHibernateTemplate().findByCriteria(criteria); 
+		List<Map<String,?>> result = criteria.list(); 
 		
 		return result;
 	}
@@ -448,7 +447,7 @@ public class DaoService extends HibernateDaoSupport
 			logger.debug("adding " + object + "...");
 		}
 		getCurrentSession().beginTransaction();
-		getHibernateTemplate().save(object);
+		getCurrentSession().save(object);
 		getCurrentSession().getTransaction().commit();
 		if (logger.isDebugEnabled()) {
 			logger.debug("done.");
@@ -464,11 +463,11 @@ public class DaoService extends HibernateDaoSupport
 			logger.debug("merging " + object + "...");
 		}
 		getCurrentSession().beginTransaction();
-		Object merged = getHibernateTemplate().merge(object);
+		Object merged = getCurrentSession().merge(object);
 		if (logger.isDebugEnabled()) {
 			logger.debug("done, updating " + merged + "...");
 		}
-		getHibernateTemplate().update(merged);
+		getCurrentSession().update(merged);
 		getCurrentSession().getTransaction().commit();
 		if (logger.isDebugEnabled()) {
 			logger.debug("done.");
